@@ -1,8 +1,5 @@
-﻿// Learn more about F# at http://fsharp.org
+﻿let listReverse list =
+    List.fold (fun list elem -> elem::list) [] list
 
-open System
-
-[<EntryPoint>]
-let main argv =
-    printfn "Hello World from F#!"
-    0 // return an integer exit code
+let list = [1; 2 ;3]
+printfn "%A" (listReverse list)
