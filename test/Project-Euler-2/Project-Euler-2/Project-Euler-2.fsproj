@@ -10,8 +10,4 @@
     <Compile Include="Program.fs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FibonacciTest\FibonacciTest.fsproj" />
-  </ItemGroup>
-
 </Project>
