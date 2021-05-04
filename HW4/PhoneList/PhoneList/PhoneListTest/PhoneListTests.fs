@@ -16,5 +16,9 @@ let ``Simple search by name test`` () =
 let ``Simple search by phone test`` () =
     [] |> addData "A" "30" |> searchNameByPhone "30" |> should equal "A"
 
+[<Test>]
+let ``Simple get data from file test`` () =
+    "../../../../testData/data.txt" |> getDataFromFile |> should equal [("A", "30")]
+
 
 
