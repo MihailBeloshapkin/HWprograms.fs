@@ -1,6 +1,7 @@
 ﻿module PhoneList
 
 open System
+open System.IO
 
 let printCases () =
     printfn "Commands:"
@@ -39,6 +40,16 @@ let getAllData phoneList =
     loop phoneList
 
 
+let saveDataToFile path phoneList =
+    let newList = phoneList |> List.fold (fun acc elem -> acc + "\n" + (fst elem) + " " + (snd elem)) ""
+    System.IO.File.WriteAllText(path, newList)
+
+let getDataFromFile path =
+    let data = File.ReadAllText(path).Split '\n'
+    let listData = Seq.toList data
+    List.map (fun (x : string) -> ((x.Split ' ').[0], (x.Split ' ').[1])) listData.Tail
+
+
 let rec process phoneList =
     printCases ()
     match Console.ReadLine() with
@@ -58,13 +69,23 @@ let rec process phoneList =
         let phone = Console.ReadLine()
         printf "%A" (searchNameByPhone phone phoneList)
         process phoneList
+    | "5" ->
+        phoneList |> getAllData
+        process phoneList
+    | "6" ->
+        printfn "Input path to save"
+        let path = Console.ReadLine()
+        saveDataToFile path phoneList
+        process phoneList    
+    | "7" ->
+        let path = Console.ReadLine()
+        path |> getDataFromFile |> process
     | _ -> ignore
 
         
+let start () =
+    [] |> process
 
 
-process []
-
-//let phoneList = [("Anna", "228"); ("Alexander", "1488"); ("Dmitry", "1337")]
-//let result = searchPhoneByName "Alexander" phoneList
+[] |> process
     
