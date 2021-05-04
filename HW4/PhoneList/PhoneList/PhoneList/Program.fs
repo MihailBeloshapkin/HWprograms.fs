@@ -3,6 +3,7 @@
 open System
 open System.IO
 
+// Display cases.
 let printCases () =
     printfn "Commands:"
     printfn "1 quit"
@@ -18,18 +19,15 @@ let printCases () =
 let addData name phone phoneList = 
     (name, phone) :: phoneList
 
-let g x = x + 1
-
-let f x = x * x
-
-printfn "%A" (1 |> g |> f)
-
+// Search phone by name.
 let searchPhoneByName name phoneList =
     phoneList |> List.item (phoneList |> List.findIndex (fun x -> fst x = name)) |> snd
-    
+
+// Search name by phone.    
 let searchNameByPhone phone phoneList =
     phoneList |> List.item (phoneList |> List.findIndex (fun x -> snd x = phone)) |> fst
 
+// Display data to a console.
 let getAllData phoneList =
     let rec loop list =
         match list with
@@ -40,17 +38,19 @@ let getAllData phoneList =
     loop phoneList
 
 
+// Save data to path.
 let saveDataToFile path phoneList =
-    let newList = phoneList |> List.fold (fun acc elem -> acc + "\n" + (fst elem) + " " + (snd elem)) ""
+    let newList = phoneList |> List.fold (fun acc elem -> 
+                                              if acc = "" then (fst elem) + " " + (snd elem)
+                                              else acc + "\n" + (fst elem) + " " + (snd elem)) ""
     System.IO.File.WriteAllText(path, newList)
 
+// Load data from file.
 let getDataFromFile path =
-    let data = File.ReadAllText(path).Split '\n'
-    let listData = Seq.toList data
-    List.map (fun (x : string) -> ((x.Split ' ').[0], (x.Split ' ').[1])) listData.Tail
+    File.ReadAllText(path).Split '\n' |> Seq.toList |> List.map (fun (x : string) -> ((x.Split ' ').[0], (x.Split ' ').[1]))
 
-
-let rec process phoneList =
+// Start process.
+let rec startProcess phoneList =
     printCases ()
     match Console.ReadLine() with
     | "1" -> ignore
@@ -58,34 +58,30 @@ let rec process phoneList =
         printfn "Input name and number"
         let name = Console.ReadLine()
         let phone = Console.ReadLine()
-        process (addData name phone phoneList)
+        startProcess (addData name phone phoneList)
     | "3" -> 
         printfn "Input name:"
         let name = Console.ReadLine()
         printfn "%A" (searchPhoneByName name phoneList)
-        process phoneList
+        startProcess phoneList
     | "4" ->
         printfn "Input phone"
         let phone = Console.ReadLine()
         printf "%A" (searchNameByPhone phone phoneList)
-        process phoneList
+        startProcess phoneList
     | "5" ->
         phoneList |> getAllData
-        process phoneList
+        startProcess phoneList
     | "6" ->
         printfn "Input path to save"
         let path = Console.ReadLine()
         saveDataToFile path phoneList
-        process phoneList    
+        startProcess phoneList    
     | "7" ->
         let path = Console.ReadLine()
-        path |> getDataFromFile |> process
+        path |> getDataFromFile |> startProcess
     | _ -> ignore
 
         
-let start () =
-    [] |> process
-
-
-[] |> process
-    
+        
+[] |> startProcess
