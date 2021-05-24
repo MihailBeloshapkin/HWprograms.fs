@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="OS.fs" />
+    <Compile Include="Program.fs" />
+    <Compile Include="virus.fs" />
+    <Compile Include="PC.fs" />
+    <Compile Include="LocalNet.fs" />  
+  </ItemGroup>
+
+</Project>
