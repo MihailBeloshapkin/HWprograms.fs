@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "point-free", "point-free\point-free.fsproj", "{E56FD055-EA80-4397-92DB-EAB49EE0566F}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "point-tree-tests", "point-tree-tests\point-tree-tests.fsproj", "{4FD822FD-BD4A-40B4-9449-61C9747F4C31}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E56FD055-EA80-4397-92DB-EAB49EE0566F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E56FD055-EA80-4397-92DB-EAB49EE0566F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E56FD055-EA80-4397-92DB-EAB49EE0566F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E56FD055-EA80-4397-92DB-EAB49EE0566F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FD822FD-BD4A-40B4-9449-61C9747F4C31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FD822FD-BD4A-40B4-9449-61C9747F4C31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FD822FD-BD4A-40B4-9449-61C9747F4C31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FD822FD-BD4A-40B4-9449-61C9747F4C31}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2642E549-B3B2-49ED-AE40-AC75DB325C03}
+	EndGlobalSection
+EndGlobal
