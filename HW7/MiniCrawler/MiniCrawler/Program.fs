@@ -14,18 +14,18 @@ let getData (url : string) =
             use stream = response.GetResponseStream()
             use reader = new StreamReader(stream)
             let html = reader.ReadToEnd()   
-            return Some html
+            return (Some html, url)
         with
             | _ -> printfn "fail"
-                   return None
+                   return (None, url)
     }
 
 
-// Display data.
-let display url (downloaded : Option<string>) = 
+// Get url and length.
+let getUrlAndLength url (downloaded : Option<string>) = 
     match downloaded with
-    | Some html -> printfn "%s   Length: %d symbols" url html.Length
-    | _ -> printfn "Fale"
+    | Some html -> (url, html.Length)
+    | _ -> raise (System.ArgumentNullException("None"))
 
 // Get links from html code.
 let getLinks (html : string) =
@@ -34,15 +34,17 @@ let getLinks (html : string) =
 
 // Download.
 let downloadAll (url : string) =
-    let mainData = getData url |> Async.RunSynchronously
+    let mainData = getData url |> Async.RunSynchronously |> fst
     match mainData with
     | Some content -> let links = content |> getLinks
-                      links |> List.map (fun link -> getData link) 
-                            |> Async.Parallel
-                            |> Async.RunSynchronously
-                            |> Array.iteri (fun i (result : string option) -> display (links.Item i) result) 
-                      
-    | None -> ()
+                      let data = links |> List.map (fun link -> link |> getData)
+                                       |> Async.Parallel
+                                       |> Async.RunSynchronously
+                      data |> Array.map (fun (c, url) -> getUrlAndLength url c) |> Array.toList
+    | None -> []
     
+// Display data.
+let display (url : string) =
+    downloadAll url |> List.map (fun (link, size) -> printfn "%s %d" link size) 
 
-downloadAll "https://github.com/MihailBeloshapkin"
+display "https://github.com/MihailBeloshapkin"
