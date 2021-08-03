@@ -45,6 +45,6 @@ let downloadAll (url : string) =
     
 // Display data.
 let display (url : string) =
-    downloadAll url |> List.map (fun (link, size) -> printfn "%s %d" link size) 
+    dhttps://github.com/MihailBeloshapkin/HWprograms.fsownloadAll url |> List.map (fun (link, size) -> printfn "%s %d" link size) 
 
 display "https://github.com/MihailBeloshapkin"
