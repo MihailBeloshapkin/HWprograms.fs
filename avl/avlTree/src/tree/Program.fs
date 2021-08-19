@@ -162,110 +162,74 @@ type BinTree () =
                      |> this.ReCalculateHight 
      
 
-    member this.MoveNext () =
-            if currentData = Empty then currentData <- tree else ()
-            let rec getNextCurrent prev =
-                               match prev with
-                               | Node(_, _, Empty, Empty) -> getNextCurrent (prevNodes.Pop())
-                               | Node(_, _, Empty, right) when right <> Empty -> currentData <- right
-                               | Node(_, _, left, right) when right <> Empty -> currentData <- right
-                                                                                prevNodes.Push(prev)
-                               | Node(_, _, left, Empty) -> getNextCurrent (prevNodes.Pop())
-                               | _ ->  raise(Exception())
-            match currentData with
-                | Node(value, height, left, right) -> prevNodes.Push(currentData)
-                                                      visited.Add(value)
-                                                      currentData <- left
-                                                      if currentData = Empty then
-                                                          getNextCurrent (prevNodes.Pop())
-                                                      true
-                | Empty -> getNextCurrent (prevNodes.Pop())    
-                           true
 
-    member this.Move () =
-        if currentData = Empty then 
-            match tree with
-            | Node(value, _, _, _) -> currentData <- tree 
-                                      prevNodes.Push(currentData)
-                                      visited.Add(value)
-                                      true 
-            | Empty -> false
-        else 
-            let rec getNext node =
-                match node with
-                | Node(value, height, Empty, Empty) -> getNext (prevNodes.Pop()) 
-                | Node(value, 
-                       height, 
-                       Node(lv, lg, ll, lr), 
-                       Empty) -> if visited.Contains(lv) then
-                                     getNext (prevNodes.Pop())
-                                 else
-                                     currentData <- Node(lv, lg, ll, lr)
-                                     prevNodes.Push(currentData)
-                                     visited.Add(lv)
-                                     true
-                | Node(value, 
-                       height,
-                       Empty,
-                       Node(rv, rh, rl, rr)) -> if visited.Contains(rv) then
-                                                    getNext (prevNodes.Pop())
-                                                else
-                                                    currentData <- Node(rv, rh, rl, rr)
-                                                    prevNodes.Push(currentData)
-                                                    visited.Add(rv)
-                                                    true
-                | Node(value, 
-                       heigth, 
-                       Node(lv, lh, ll, lr), 
-                       Node(rv, rh, rl, rr)) -> match visited.Contains(value) && prevNodes.Contains(node) |> not with
-                                                | true -> prevNodes.Push(node)
-                                                | _ -> ()  
-                                                if visited.Contains(lv) |> not then
-                                                    currentData <- Node(lv, lh, ll, lr)
-                                                    prevNodes.Push(currentData)
-                                                    visited.Add(lv)
-                                                    true
-                                                else if visited.Contains(rv) |> not then
-                                                    currentData <- Node(rv, rh, rl, rr)
-                                                    prevNodes.Push(currentData)
-                                                    visited.Add(rv)
-                                                    true
-                                                else
-                                                   match prevNodes.Count with
-                                                   | 0 -> false
-                                                   | _ -> getNext (prevNodes.Pop())
-                                                   
-                | _ -> false
-            getNext currentData
+    interface System.Collections.IEnumerator with
+        member this.Current 
+            with get () = match currentData with
+                          | Empty -> raise(Exception())
+                          | Node(value, _, _, _) -> value :> obj
 
-
-    (*interface IEnumerator<int> with
         member this.Reset () =
             currentData <- tree
 
         member this.MoveNext () =
-            let rec getNextCurrent prev =
-                               prevNodes.Push(prev)
-                               match prev with
-                               | Node(_, _, Empty, right) when right <> Empty -> currentData <- right
-                               | Node(_, _, Empty, Empty) -> getNextCurrent (prevNodes.Pop())
-                               | _ -> raise(Exception())
-            match currentData with
-                | Node(value, height, left, right) -> prevNodes.Push(currentData)
-                                                      visited.Add(value)
-                                                      currentData <- left
-                                                      true
-                | Empty -> getNextCurrent (prevNodes.Pop())    
-                           true
-                
+            if currentData = Empty then 
+                match tree with
+                | Node(value, _, _, _) -> currentData <- tree 
+                                          prevNodes.Push(currentData)
+                                          visited.Add(value)
+                                          true 
+                | Empty -> false
+            else 
+                let rec getNext node =
+                    match node with
+                    | Node(value, height, Empty, Empty) -> getNext (prevNodes.Pop()) 
+                    | Node(value, 
+                           height, 
+                           Node(lv, lg, ll, lr), 
+                           Empty) -> if visited.Contains(lv) then
+                                         getNext (prevNodes.Pop())
+                                     else
+                                         currentData <- Node(lv, lg, ll, lr)
+                                         prevNodes.Push(currentData)
+                                         visited.Add(lv)
+                                         true
+                    | Node(value, 
+                           height,
+                           Empty,
+                           Node(rv, rh, rl, rr)) -> if visited.Contains(rv) then
+                                                        getNext (prevNodes.Pop())
+                                                    else
+                                                        currentData <- Node(rv, rh, rl, rr)
+                                                        prevNodes.Push(currentData)
+                                                        visited.Add(rv)
+                                                        true
+                    | Node(value, 
+                           heigth, 
+                           Node(lv, lh, ll, lr), 
+                           Node(rv, rh, rl, rr)) -> match visited.Contains(value) && prevNodes.Contains(node) |> not with
+                                                    | true -> prevNodes.Push(node)
+                                                    | _ -> ()  
+                                                    if visited.Contains(lv) |> not then
+                                                        currentData <- Node(lv, lh, ll, lr)
+                                                        prevNodes.Push(currentData)
+                                                        visited.Add(lv)
+                                                        true
+                                                    else if visited.Contains(rv) |> not then
+                                                        currentData <- Node(rv, rh, rl, rr)
+                                                        prevNodes.Push(currentData)
+                                                        visited.Add(rv)
+                                                        true
+                                                    else
+                                                       match prevNodes.Count with
+                                                       | 0 -> false
+                                                       | _ -> getNext (prevNodes.Pop())
+                                                   
+                    | _ -> false
+                getNext currentData
+        
 
-        member this.get_Current () =
-            match currentData with
-            | Node(value, height, left, right) ->  value // value
-            | _ -> raise(Exception())
-
-    //    member this.Dispose () =
-      *)     
+           
            
 
 let sub q =
@@ -284,11 +248,5 @@ sample.Add(3)
 sample.Add(7)
 sample.Add(8)
 sample.Add(9)
-sample.Move() |> ignore
-sample.Move() |> ignore
-sample.Move() |> ignore
-sample.Move() |> ignore
-sample.Move() |> ignore
-sample.Move() |> ignore
 sample.DisplayTree()
 
