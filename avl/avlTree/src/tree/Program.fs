@@ -1,3 +1,4 @@
+module AvlTree
 open System
 open System.Collections
 open System.Collections.Generic
@@ -13,8 +14,10 @@ type BinTree () =
     // Current node.
     let mutable currentData : Tree = Empty
 
+    // Previous nodes.
     let mutable prevNodes : Stack<Tree> = Stack<Tree>()
 
+    // Visited vertexes.
     let mutable visited : List<int> = List<int>()
 
     // Calculate hight of each node.
@@ -68,19 +71,6 @@ type BinTree () =
                                       (rHeight - lHeight)
         | Empty -> 0
 
-    
-
-    (*
-    member private this.Balancing t =
-        let rec subBalancing t =
-            match t with
-            | Node(value, height, left, right) ->  if t |> BalanceFactor = 2 then
-                                                       
-                                                   Node(value, height, left |> subBalancing, right |> subBalancing)  
-            | Empty -> Empty
-    *)
-
-
     // Left rotation of the vertex.
     member this.LeftRotation t =
         let sub q =
@@ -122,16 +112,6 @@ type BinTree () =
             | Empty -> Empty
         subBalancing t
 
-    // Display data from the tree.
-    member this.DisplayTree () =
-        let rec sub t =
-            match t with
-            | Node(value, height, left, right) -> printfn "%d(%d)" value height
-                                                  sub left
-                                                  sub right
-            | Empty -> ()
-        sub tree
-
     // Delete max value in sub tree and get it.
     member private this.DeleteMaxInSubTree (currentNode : Tree) =
         let mutable deletedData : int = 0
@@ -161,6 +141,17 @@ type BinTree () =
                      |> this.Balancing
                      |> this.ReCalculateHight 
      
+    member this.Contains (sValue : int) =
+        let rec searching (crnt : Tree) (searchVal : int) =
+            match crnt with 
+            | Node(value, _, left, right) -> if searchVal > value then
+                                                 searching right searchVal
+                                             elif searchVal < value then
+                                                 searching left searchVal
+                                             else
+                                                 true
+            | Empty -> false
+        (tree, sValue) ||> searching
 
 
     interface System.Collections.IEnumerator with
@@ -169,9 +160,13 @@ type BinTree () =
                           | Empty -> raise(Exception())
                           | Node(value, _, _, _) -> value :> obj
 
+        // Reset numerator.
         member this.Reset () =
             currentData <- tree
+            prevNodes.Clear()
+            visited.Clear()
 
+        // Move to the next vertex.
         member this.MoveNext () =
             if currentData = Empty then 
                 match tree with
@@ -229,24 +224,12 @@ type BinTree () =
                 getNext currentData
         
 
-           
-           
-
-let sub q =
-            match q with
-            | Node(qValue, qHeight, A, p) -> match p with
-                                             | Node(pValue, pHeight, B, C) -> Node(pValue, pHeight, Tree.Node(qValue, qHeight, A, B), C)  
-                                             | _ -> raise(Exception())
-            | _ -> q
-
-//let a = Node(5, 4, Node(3, 1, Empty, Empty), Node(7, 3, Empty, Node(8, 2, Empty, Node(9, 1, Empty, Empty)))) |> sub
-
-        
+                   
 let sample = BinTree()
 sample.Add(5)
 sample.Add(3)
 sample.Add(7)
 sample.Add(8)
 sample.Add(9)
-sample.DisplayTree()
+sample.Contains(9) |> ignore
 
