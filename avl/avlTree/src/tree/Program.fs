@@ -19,6 +19,10 @@ type BinTree () =
 
     // Visited vertexes.
     let mutable visited : List<int> = List<int>()
+    
+    // Property
+    member this.Tree with get () = tree
+
 
     // Calculate hight of each node.
     member private this.ReCalculateHight tree =
@@ -71,8 +75,9 @@ type BinTree () =
                                       (rHeight - lHeight)
         | Empty -> 0
 
+    
     // Left rotation of the vertex.
-    member this.LeftRotation t =
+    member private this.LeftRotation t =
         let sub q =
             match q with
             | Node(qValue, qHeight, A, p) -> match p with
@@ -82,7 +87,7 @@ type BinTree () =
         sub t
 
     // Right rotation of the vertex.
-    member this.RightRotation t =
+    member private this.RightRotation t =
         let sub p =
             match p with
             | Node(pValue, pHeight, q, C) -> match q with
@@ -141,6 +146,7 @@ type BinTree () =
                      |> this.Balancing
                      |> this.ReCalculateHight 
      
+    // Checks that current tree contains value.
     member this.Contains (sValue : int) =
         let rec searching (crnt : Tree) (searchVal : int) =
             match crnt with 
@@ -154,10 +160,12 @@ type BinTree () =
         (tree, sValue) ||> searching
 
 
-    interface System.Collections.IEnumerator with
+    interface IEnumerator with
         member this.Current 
             with get () = match currentData with
-                          | Empty -> raise(Exception())
+                          | Empty -> match tree with
+                                     | Empty -> raise(Exception()) 
+                                     | Node(value, _, _, _) -> value :> obj 
                           | Node(value, _, _, _) -> value :> obj
 
         // Reset numerator.
@@ -223,13 +231,15 @@ type BinTree () =
                     | _ -> false
                 getNext currentData
         
-
                    
 let sample = BinTree()
+let enumer = sample :> IEnumerator
 sample.Add(5)
 sample.Add(3)
+sample.Delete(3)
 sample.Add(7)
 sample.Add(8)
 sample.Add(9)
+(sample :> IEnumerator).MoveNext() |> ignore
 sample.Contains(9) |> ignore
 
