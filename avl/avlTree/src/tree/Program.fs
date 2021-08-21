@@ -231,15 +231,5 @@ type BinTree () =
                     | _ -> false
                 getNext currentData
         
-                   
-let sample = BinTree()
-let enumer = sample :> IEnumerator
-sample.Add(5)
-sample.Add(3)
-sample.Delete(3)
-sample.Add(7)
-sample.Add(8)
-sample.Add(9)
-(sample :> IEnumerator).MoveNext() |> ignore
-sample.Contains(9) |> ignore
+
 
