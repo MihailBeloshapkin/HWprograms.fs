@@ -3,28 +3,45 @@ open System
 open System.Collections
 open System.Collections.Generic
 
+/// <summary>
+/// Binary tree.
+/// </summary>
 type Tree =
     | Node of value : int * height : int * left : Tree * right : Tree
     | Empty
 
+/// <summary>
+/// Binary avl tree class and IEnumerator interface realization.
+/// </summary>
 type BinTree () =
-    // Binary tree.
+    /// <summary>
+    /// Binary tree.
+    /// </summary>
     let mutable tree : Tree = Empty
 
-    // Current node.
+    /// <summary>
+    /// Current node.
+    /// </summary>
     let mutable currentData : Tree = Empty
 
-    // Previous nodes.
+    /// <summary>
+    /// Previous nodes.
+    /// </summary>
     let mutable prevNodes : Stack<Tree> = Stack<Tree>()
-
-    // Visited vertexes.
+    
+    /// <summary>
+    /// Visited vertexes.
+    /// </summary>
     let mutable visited : List<int> = List<int>()
     
-    // Property
+    /// <summary>
+    /// Tree(used for testing, for example to check that tree is balanced).
+    /// </summary>
     member this.Tree with get () = tree
 
-
-    // Calculate hight of each node.
+    /// <summary>
+    /// Calculate hight of each node.
+    /// </summary>
     member private this.ReCalculateHight tree =
         let rec sub (t : Tree) =
             match t with
@@ -44,7 +61,9 @@ type BinTree () =
         sub tree
     
 
-    // Add data to a binary tree.
+    /// <summary>
+    /// Add data to a binary tree.
+    /// </summary>
     member this.Add (newData : int) =
         let rec subAdd (newData : int) (currentNode : Tree) =
             match currentNode with
@@ -61,7 +80,9 @@ type BinTree () =
                      |> this.ReCalculateHight
 
 
-    // Balance factor.
+    /// <summary>
+    /// Balance factor.
+    /// </summary>
     member private this.BalanceFactor t =
         match t with
         | Node(_, _ , left, right) -> let mutable lHeight = -1
@@ -75,8 +96,9 @@ type BinTree () =
                                       (rHeight - lHeight)
         | Empty -> 0
 
-    
-    // Left rotation of the vertex.
+    /// <summary>
+    /// Left rotation of the vertex.
+    /// </summary>
     member private this.LeftRotation t =
         let sub q =
             match q with
@@ -86,7 +108,9 @@ type BinTree () =
             | _ -> q
         sub t
 
-    // Right rotation of the vertex.
+    /// <summary>
+    /// Right rotation of the vertex.
+    /// </summary>
     member private this.RightRotation t =
         let sub p =
             match p with
@@ -96,7 +120,9 @@ type BinTree () =
             | _ -> p
         sub t
 
-    // Balancing tree in case of tree is not balanced.
+    /// <summary>
+    /// Balancing tree in case of tree is not balanced.
+    /// </summary>
     member private this.Balancing t =
         let rec subBalancing t =
             match t with
@@ -117,7 +143,9 @@ type BinTree () =
             | Empty -> Empty
         subBalancing t
 
-    // Delete max value in sub tree and get it.
+    /// <summary>
+    /// Delete max value in sub tree and get it.
+    /// </summary>
     member private this.DeleteMaxInSubTree (currentNode : Tree) =
         let mutable deletedData : int = 0
         let rec delete (current : Tree) : Tree =
@@ -128,7 +156,9 @@ type BinTree () =
             | _ -> raise(ArgumentException("Sub tree")) 
         (deletedData, delete currentNode)
 
-    // Delete data from binary tree.
+    /// <summary>
+    /// Delete data from binary tree.
+    /// </summary>
     member this.Delete (deleteData : int) =
         let rec subDelete (currentNode : Tree) =
             match currentNode with
@@ -146,7 +176,9 @@ type BinTree () =
                      |> this.Balancing
                      |> this.ReCalculateHight 
      
-    // Checks that current tree contains value.
+    /// <summary>
+    /// Checks that current tree contains value.
+    /// </summary>
     member this.Contains (sValue : int) =
         let rec searching (crnt : Tree) (searchVal : int) =
             match crnt with 
@@ -160,7 +192,13 @@ type BinTree () =
         (tree, sValue) ||> searching
 
 
+    /// <summary>
+    /// IEnumerator realization.
+    /// </summary>
     interface IEnumerator with
+        /// <summary>
+        /// Returns current vertex.
+        /// </summary>
         member this.Current 
             with get () = match currentData with
                           | Empty -> match tree with
@@ -168,13 +206,17 @@ type BinTree () =
                                      | Node(value, _, _, _) -> value :> obj 
                           | Node(value, _, _, _) -> value :> obj
 
-        // Reset numerator.
+        /// <summary>
+        /// Reset numerator.
+        /// </summary>
         member this.Reset () =
             currentData <- tree
             prevNodes.Clear()
             visited.Clear()
 
-        // Move to the next vertex.
+        /// <summary>
+        /// Move to the next vertex.
+        /// </summary>
         member this.MoveNext () =
             if currentData = Empty then 
                 match tree with
