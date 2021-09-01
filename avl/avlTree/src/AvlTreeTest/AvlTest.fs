@@ -36,7 +36,7 @@ let ``Simple move test`` () =
     enumer.Current |> should equal 2
  
 let checkThatBalance (tree : AvlTree.BinTree) =
-    let IsBalanced t =
+    let isBalanced t =
         match t with
         | Empty -> true
         | Node(_, _, left, right) -> let mutable lHeight = -1
@@ -51,7 +51,7 @@ let checkThatBalance (tree : AvlTree.BinTree) =
     let rec checker (tree : Tree) =
         match tree with
         | Empty -> true
-        | Node(value, height, left, right) -> if IsBalanced tree then 
+        | Node(value, height, left, right) -> if isBalanced tree then 
                                                   (checker left) && (checker right)
                                               else false
     checker tree.Tree
@@ -61,5 +61,11 @@ let ``Check that balanced`` () =
     let sample = BinTree()
     for i in 1 .. 10 do
         sample.Add(i)
+    sample |> checkThatBalance |> should equal true
+
+[<Test>]
+let ``Check balance algorithm with huge trees`` () =
+    let sample = BinTree()
+    [1 .. 500] |> List.map (fun x -> if x % 2 = 0 then sample.Add(x) else sample.Add(-x)) |> ignore
     sample |> checkThatBalance |> should equal true
                                                
