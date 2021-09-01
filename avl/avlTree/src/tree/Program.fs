@@ -11,7 +11,7 @@ type Tree =
     | Empty
 
 /// <summary>
-/// Binary avl tree class and IEnumerator interface realization.
+/// Binary search avl tree class and IEnumerator interface realization.
 /// </summary>
 type BinTree () =
     /// <summary>
@@ -43,7 +43,7 @@ type BinTree () =
     /// <summary>
     /// Calculate hight of each node.
     /// </summary>
-    member private this.ReCalculateHight tree =
+    member private this.ReCalculateHeight tree =
         let rec sub (t : Tree) =
             match t with
             | Node(value, height, Empty, Empty) -> (Node(value, 1, Empty, Empty), 1)
@@ -69,9 +69,9 @@ type BinTree () =
                                                 
         
         tree <- tree |> subAdd newData
-                     |> this.ReCalculateHight   
+                     |> this.ReCalculateHeight   
                      |> this.Balance  
-                     |> this.ReCalculateHight
+                     |> this.ReCalculateHeight
 
 
     /// <summary>
@@ -90,6 +90,28 @@ type BinTree () =
                                       (rHeight - lHeight)
         | Empty -> 0
 
+    member this.CheckThatBalanced () =
+        let isBalanced t =
+            match t with
+            | Empty -> true
+            | Node(_, _, left, right) -> let mutable lHeight = -1
+                                         let mutable rHeight = -1
+                                         match left with
+                                         | Empty -> lHeight <- 0
+                                         | Node(_, height, _, _) -> lHeight <- height
+                                         match right with
+                                         | Empty -> rHeight <- 0
+                                         | Node(_, height, _, _) -> rHeight <- height
+                                         Math.Abs(lHeight - rHeight) < 2
+        let rec checker (tree : Tree) =
+            match tree with   
+            | Empty -> true
+            | Node(value, height, left, right) -> if isBalanced tree then 
+                                                      (checker left) && (checker right)
+                                                  else false
+        checker tree
+
+
     /// <summary>
     /// Left rotation of the vertex.
     /// </summary>
@@ -98,7 +120,7 @@ type BinTree () =
             match q with
             | Node(qValue, qHeight, A, p) -> match p with
                                              | Node(pValue, pHeight, B, C) -> Node(pValue, pHeight, Tree.Node(qValue, qHeight, A, B), C)  
-                                             | _ -> raise(Exception())
+                                             | _ -> failwith "Incorrect node"
             | _ -> q
         sub t
 
@@ -110,7 +132,7 @@ type BinTree () =
             match p with
             | Node(pValue, pHeight, q, C) -> match q with
                                              | Node(qValue, qHeight, A, B) -> Node(qValue, qHeight, A, Tree.Node(pValue, pHeight, B, C))
-                                             | _ -> raise(Exception())
+                                             | _ -> failwith "Incorrect node"
             | _ -> p
         sub t
 
@@ -186,9 +208,9 @@ type BinTree () =
                                                          Node(maxInLeftSubTree, height, newLeft, right)
             | _ -> Empty
         tree <- tree |> subDelete
-        tree <- tree |> this.ReCalculateHight
+        tree <- tree |> this.ReCalculateHeight
                      |> this.Balance
-                     |> this.ReCalculateHight 
+                     |> this.ReCalculateHeight 
      
     /// <summary>
     /// Checks that current tree contains value.
@@ -288,51 +310,8 @@ type BinTree () =
                 getNext currentData
 
 
-let checkThatBalance (tree : Tree) =
-    let IsBalanced t =
-        match t with
-        | Empty -> true
-        | Node(_, _, left, right) -> let mutable lHeight = -1
-                                     let mutable rHeight = -1
-                                     match left with
-                                     | Empty -> lHeight <- 0
-                                     | Node(_, height, _, _) -> lHeight <- height
-                                     match right with
-                                     | Empty -> rHeight <- 0
-                                     | Node(_, height, _, _) -> rHeight <- height
-                                     if (Math.Abs(lHeight - rHeight) < 2) then true else false
-    let rec checker (tree : Tree) =
-        match tree with
-        | Empty -> true
-        | Node(value, height, left, right) -> if IsBalanced tree then 
-                                                  (checker left) && (checker right)
-                                              else false
-    checker tree
-
-
-(*
-let sampleU = Node(3, 
-                   5,
-                   Node(2, 2, Node(1, 1, Empty, Empty), Empty),
-                   Node(5, 4, Node(4, 1, Empty, Empty), Node(6, 3, Empty, Node(7, 2, Empty, Node(8, 1, Empty, Empty)))) 
-)
-
-
-let sample1 = BinTree()
-for i in 1 .. 8 do
-    sample1.Add(i)
-let a = sample1.GetList sampleU
-sample1.Tree |> checkThatBalance |> ignore
-*)
-let sample1 = BinTree()
-for i in 1 .. 8 do
-    sample1.Add(i)
-
 let sample = BinTree()
-sample.Add(5)
-sample.Add(7)
-sample.Add(3)
-sample.Add(9)
-sample.Add(11)
-sample.Tree |> checkThatBalance |> ignore
-
+for i in 1 .. 10 do sample.Add(i)
+let enumer = sample :> IEnumerator
+for i in 1 .. 5 do enumer.MoveNext() |> ignore
+enumer.Reset()

@@ -35,37 +35,33 @@ let ``Simple move test`` () =
     enumer.MoveNext() |> ignore
     enumer.Current |> should equal 2
  
-let checkThatBalance (tree : AvlTree.BinTree) =
-    let isBalanced t =
-        match t with
-        | Empty -> true
-        | Node(_, _, left, right) -> let mutable lHeight = -1
-                                     let mutable rHeight = -1
-                                     match left with
-                                     | Empty -> lHeight <- 0
-                                     | Node(_, height, _, _) -> lHeight <- height
-                                     match right with
-                                     | Empty -> rHeight <- 0
-                                     | Node(_, height, _, _) -> rHeight <- height
-                                     if (Math.Abs(lHeight - rHeight) < 2) then true else false
-    let rec checker (tree : Tree) =
-        match tree with
-        | Empty -> true
-        | Node(value, height, left, right) -> if isBalanced tree then 
-                                                  (checker left) && (checker right)
-                                              else false
-    checker tree.Tree
 
 [<Test>]
 let ``Check that balanced`` () =
     let sample = BinTree()
-    for i in 1 .. 10 do
-        sample.Add(i)
-    sample |> checkThatBalance |> should equal true
+    for i in 1 .. 10 do sample.Add(i)
+    sample.CheckThatBalanced() |> should equal true
+[<Test>]
+let ``Reset test`` () =
+    let sample = BinTree()
+    for i in 1 .. 5 do sample.Add(i)
+    let enumer = sample :> IEnumerator
+    for i in 1 .. 2 do enumer.MoveNext() |> ignore
+    enumer.Reset()
+    enumer.Current |> should equal 2
 
 [<Test>]
 let ``Check balance algorithm with huge trees`` () =
     let sample = BinTree()
     [1 .. 500] |> List.map (fun x -> if x % 2 = 0 then sample.Add(x) else sample.Add(-x)) |> ignore
-    sample |> checkThatBalance |> should equal true
+    sample.CheckThatBalanced() |> should equal true
+
+[<Test>]
+let ``Check that balanced after deletion`` () =
+    let sample = BinTree()
+    for i in 1 .. 500 do sample.Add(i)
+    [1 .. 500] |> List.map (fun x -> if x % 2 = 0 then sample.Delete(x)) |> ignore
+    sample.CheckThatBalanced() |> should equal true
+
+                                          
                                                
