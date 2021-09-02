@@ -41,14 +41,15 @@ let ``Check that balanced`` () =
     let sample = BinTree()
     for i in 1 .. 10 do sample.Add(i)
     sample.CheckThatBalanced() |> should equal true
+
 [<Test>]
 let ``Reset test`` () =
     let sample = BinTree()
-    for i in 1 .. 5 do sample.Add(i)
+    for i in 1 .. 30 do sample.Add(i)
     let enumer = sample :> IEnumerator
-    for i in 1 .. 2 do enumer.MoveNext() |> ignore
+    for i in 1 .. 15 do enumer.MoveNext() |> ignore
     enumer.Reset()
-    enumer.Current |> should equal 2
+    enumer.Current |> should equal 16
 
 [<Test>]
 let ``Check balance algorithm with huge trees`` () =

@@ -34,12 +34,6 @@ type BinTree () =
     /// </summary>
     let mutable visited : List<int> = List<int>()
 
-    
-    /// <summary>
-    /// Tree(used for testing, for example to check that tree is balanced).
-    /// </summary>
-    member this.Tree with get () = tree
-
     /// <summary>
     /// Calculate hight of each node.
     /// </summary>
@@ -90,6 +84,9 @@ type BinTree () =
                                       (rHeight - lHeight)
         | Empty -> 0
 
+    /// <summary>
+    /// Check that tree is balanced.
+    /// </summary>
     member this.CheckThatBalanced () =
         let isBalanced t =
             match t with
@@ -136,7 +133,10 @@ type BinTree () =
             | _ -> p
         sub t
 
-    member this.GetList t =
+    /// <summary>
+    /// Get list of unbalanced nodes.
+    /// </summary>
+    member private this.GetList t =
         let rec lowestUnbalanced (tr : Tree) l =
             match tr with
             | Node(value, _, left, right) -> if tr |> this.BalanceFactor = 2 then
@@ -288,30 +288,27 @@ type BinTree () =
                     | Node(value, 
                            heigth, 
                            Node(lv, lh, ll, lr), 
-                           Node(rv, rh, rl, rr)) -> match visited.Contains(value) && prevNodes.Contains(node) |> not with
-                                                    | true -> prevNodes.Push(node)
-                                                    | _ -> ()  
-                                                    if visited.Contains(lv) |> not then
-                                                        currentData <- Node(lv, lh, ll, lr)
-                                                        prevNodes.Push(currentData)
-                                                        visited.Add(lv)
-                                                        true
-                                                    else if visited.Contains(rv) |> not then
-                                                        currentData <- Node(rv, rh, rl, rr)
-                                                        prevNodes.Push(currentData)
-                                                        visited.Add(rv)
-                                                        true
-                                                    else
-                                                       match prevNodes.Count with
-                                                       | 0 -> false
-                                                       | _ -> getNext (prevNodes.Pop())
+                           Node(rv, rh, rl, rr)) -> 
+                                match visited.Contains(lv) && visited.Contains(rv) with
+                                | true -> if prevNodes.Count > 0 then getNext (prevNodes.Pop()) else false
+                                | _ ->  match visited.Contains(value) && prevNodes.Contains(node) |> not with
+                                        | true -> prevNodes.Push(node)
+                                        | _ -> ()  
+                                        if visited.Contains(lv) |> not then
+                                            currentData <- Node(lv, lh, ll, lr)
+                                            prevNodes.Push(currentData)
+                                            visited.Add(lv)
+                                            true
+                                        else if visited.Contains(rv) |> not then
+                                            currentData <- Node(rv, rh, rl, rr)
+                                            prevNodes.Push(currentData)
+                                            visited.Add(rv)
+                                            true
+                                        else
+                                            match prevNodes.Count with
+                                            | 0 -> false
+                                            | _ -> getNext (prevNodes.Pop())
                                                    
                     | _ -> false
                 getNext currentData
 
-
-let sample = BinTree()
-for i in 1 .. 10 do sample.Add(i)
-let enumer = sample :> IEnumerator
-for i in 1 .. 5 do enumer.MoveNext() |> ignore
-enumer.Reset()
