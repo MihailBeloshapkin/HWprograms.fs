@@ -5,9 +5,6 @@ open NUnit.Framework
 open FsUnit
 open LambdaInterpreter
 
-[<SetUp>]
-let Setup () =
-    ()
 
 [<Test>]
 let ``Simple test`` () =

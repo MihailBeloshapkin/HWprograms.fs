@@ -1,12 +1,14 @@
 ﻿module LambdaInterpreter
 
-// Lambda term.
+/// Lambda term.
 type Lambda<'a> =
     | Var of 'a
     | Application of Lambda<'a> * Lambda<'a>
     | Abstraction of 'a * Lambda<'a>
 
-// Get free vars from term.
+/// <summary>
+/// Get free vars from term.
+/// </summary>
 let rec getFreeVars term =
     let rec sub term acc =
         match term with
@@ -15,7 +17,9 @@ let rec getFreeVars term =
         | Abstraction(var, inner) -> sub inner acc - set[var]
     Set.empty |> sub term
 
-// Get value from the set.
+/// <summary>
+/// Get value from the set.
+/// </summary>
 let rec getNewValFromSet set =
     let newVal = System.Guid.NewGuid()
     if set |> Set.contains newVal then
@@ -23,6 +27,9 @@ let rec getNewValFromSet set =
     else
         newVal
 
+/// <summary>
+/// Substitutes variable in term.
+/// </summary>
 let rec substitute term variableToChange substitutedTerm =
     match term with
     | Var name when name = variableToChange -> substitutedTerm
@@ -36,7 +43,9 @@ let rec substitute term variableToChange substitutedTerm =
         | _ -> let newVar = getFreeVars innerTerm + getFreeVars substitutedTerm |> getNewValFromSet 
                Abstraction(newVar, innerTerm |> substitute (Var newVar) variable |> substitute substitutedTerm variableToChange) 
 
-
+/// <summary>
+/// Beta reduction by normal strategy.
+/// </summary>
 let rec reduce term =
     match term with
     | Var _ -> term
