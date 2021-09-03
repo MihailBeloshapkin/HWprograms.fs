@@ -1,7 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>library</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
@@ -17,7 +18,6 @@
 
   <ItemGroup>
     <Compile Include="BracketsTests.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
