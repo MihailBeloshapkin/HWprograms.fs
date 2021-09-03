@@ -6,4 +6,4 @@ open FsCheck
 
 [<Test>]
 let ``Simple test`` () =
-    Check.QuickThrowOnFailure(fun n l -> (n l) ||> multiplyByNumber = ((n l) ||> multiplyNyNumber'3()))
+    Check.QuickThrowOnFailure(fun n l -> (n, l) ||> multiplyByNumber = ((n, l) ||> multiplyNyNumber'3()))
