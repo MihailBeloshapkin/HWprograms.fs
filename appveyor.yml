@@ -1,7 +1,6 @@
 image:
   - Ubuntu
-before_build:
-  - nuget restore HW4\PointTree\PointTree\PointTree.sln
+
 before_script:
   - dotnet build HW4\PointTree\PointTree\PointTree.sln
 
