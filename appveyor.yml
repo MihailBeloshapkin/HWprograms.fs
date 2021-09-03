@@ -1,5 +1,4 @@
-image:
-  - Ubuntu
+image: Ubuntu
 
 before_script:
   - dotnet build HW4\PointTree\PointTree\PointTree.sln
