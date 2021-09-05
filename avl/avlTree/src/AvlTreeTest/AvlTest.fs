@@ -20,6 +20,13 @@ let ``Simple deletion test`` () =
     sample.Delete(7)
     sample.Contains(7) |> should equal false
 
+
+[<Test>]
+let ``Check that tree is BST`` () =
+    let sample = BinTree()
+    for i in 1..10 do sample.Add(i)
+    sample.CheckThatBST() |> should equal true
+
 [<Test>]
 let ``Empty tree move test`` () =
     let sample = AvlTree.BinTree()

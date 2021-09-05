@@ -73,14 +73,14 @@ type BinTree () =
     /// </summary>
     member private this.BalanceFactor t =
         match t with
-        | Node(_, _ , left, right) -> let mutable lHeight = -1
-                                      let mutable rHeight = -1
-                                      match left with
-                                      | Empty -> lHeight <- 0
-                                      | Node(_, height, _, _) -> lHeight <- height
-                                      match right with
-                                      | Empty -> rHeight <- 0
-                                      | Node(_, height, _, _) -> rHeight <- height
+        | Node(_, _ , left, right) -> let lHeight = 
+                                          match left with
+                                          | Empty -> 0
+                                          | Node(_, height, _, _) -> height
+                                      let rHeight = 
+                                          match right with
+                                          | Empty -> 0
+                                          | Node(_, height, _, _) -> height
                                       (rHeight - lHeight)
         | Empty -> 0
 
@@ -108,6 +108,20 @@ type BinTree () =
                                                   else false
         checker tree
 
+    /// <summary>
+    /// This function checks that tree is a binary search tree.
+    /// Use this for testing.
+    /// </summary>
+    member this.CheckThatBST () =
+        let rec sub t =
+            match t with
+            | Node(value, height, (Node(lVal, lHeight, lLeft, lRight) as left), (Node(rVal, rHeight, rLeft, rRight) as right)) -> 
+                if value > lVal && value < rVal then
+                    sub left && sub right
+                else 
+                    false
+            | _ -> true
+        tree |> sub
 
     /// <summary>
     /// Left rotation of the vertex.
@@ -189,7 +203,7 @@ type BinTree () =
             | Node(value, height, left, Tree.Empty) -> deletedData <- value
                                                        Empty
             | Node(value, height, left, right) -> Node(value, height, left, delete right)
-            | _ -> raise(ArgumentException("Sub tree")) 
+            | _ -> failwith "Incorrect sub tree"
         (deletedData, delete currentNode)
 
     /// <summary>
@@ -227,7 +241,19 @@ type BinTree () =
             | Empty -> false
         (tree, sValue) ||> searching
 
-    
+    member this.GetEnum () =
+        let rec treeAcc t (l : List<int>) =
+            match t with
+            | Node(value, height, left, right) -> l.Add(value)
+                                                  treeAcc left l
+                                                  treeAcc right l
+            | Empty -> ()
+        let l = List<int>()
+        treeAcc tree l
+        l.GetEnumerator()
+        
+        
+
     /// <summary>
     /// IEnumerator realization.
     /// </summary>
@@ -238,7 +264,7 @@ type BinTree () =
         member this.Current 
             with get () = match currentData with
                           | Empty -> match tree with
-                                     | Empty -> raise(Exception()) 
+                                     | Empty -> failwith "Empty!" 
                                      | Node(value, _, _, _) -> value :> obj 
                           | Node(value, _, _, _) -> value :> obj
 
@@ -312,3 +338,14 @@ type BinTree () =
                     | _ -> false
                 getNext currentData
 
+
+let sample = BinTree()
+sample.Add(4)
+sample.Add(3)
+sample.Add(5)
+sample.Add(7)
+sample.Add(1)
+sample.Add(9)
+let mutable a = sample.GetEnum()
+a.MoveNext() |> ignore
+a.MoveNext() |> ignore
