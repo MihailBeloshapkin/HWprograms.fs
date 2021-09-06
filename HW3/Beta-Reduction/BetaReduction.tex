@@ -1,0 +1,24 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtext}
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{mathptmx}
+\usepackage[english, russian]{babel}
+\linespread{1.6}
+\usepackage[left=1.5cm, right=1.5cm, top=2cm, bottom=2cm, bindingoffset=0cm]{geometry}
+
+\begin{document}
+\begin{center}
+    \underline{Beta-Reduction}
+\end{center}
+\begin{center}
+(($\lambda$ a.($\lambda$ b.b b) ($\lambda$ b.b b)) b) (($\lambda$ c.(c b)) ($\lambda$ a.a)) 
+$\to_\beta$\\
+(($\lambda$ b.b b) ($\lambda$ b.b b)) ((($\lambda$ c.(c b)) ($\lambda$ a.a))
+$\to_\beta$\\
+(($\lambda$ b.b b) ($\lambda$ b.b b)) (($\lambda$a.a) b)
+$\to_\beta$\\
+($\lambda$ b.b b) ($\lambda$ b.b b) b    
+\end{center}
+\end{document}
