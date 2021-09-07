@@ -2,7 +2,9 @@
 
 open System
 
-// Computing with corresponding accuracy.
+/// <summary>
+/// Computing with corresponding accuracy.
+/// </summary>
 type Computing(accuracy : int) = 
     do if accuracy < 0 then raise (System.ArgumentException("Incorrect accuracy value"))
     member this.Bind (x : float, f) = 
