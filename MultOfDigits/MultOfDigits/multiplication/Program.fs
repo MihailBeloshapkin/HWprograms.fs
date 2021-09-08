@@ -12,7 +12,3 @@ let multOfDigits (x : int) =
         | _ -> loop (num / 10) (acc * (num % 10))
     loop (Math.Abs(x)) 1
 
-
-let a = -24 % 10
-printfn "%A"
-
