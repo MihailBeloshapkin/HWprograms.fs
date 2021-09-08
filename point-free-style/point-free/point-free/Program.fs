@@ -1,11 +1,16 @@
-﻿module pointTree
+﻿module PointTree
 
 open System
 
+/// Original.
 let f g l = List.map g (List.tail l)
 
+/// Without list argument.
 let f'1 g = List.tail >> List.map g
 
-let f'2 = List.map >> ((<<) List.tail)
+/// Point free.
+let f'2 = ((>>) List.tail) << List.map
 
-printfn "%A" (f'2 (fun x -> x*2) [1; 2; 5])
+printfn "%A" (f'2 (fun x -> x * 2) [0])
+
+
