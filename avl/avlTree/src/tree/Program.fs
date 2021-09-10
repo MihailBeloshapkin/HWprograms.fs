@@ -91,14 +91,12 @@ type BinTree () =
         let isBalanced t =
             match t with
             | Empty -> true
-            | Node(_, _, left, right) -> let mutable lHeight = -1
-                                         let mutable rHeight = -1
-                                         match left with
-                                         | Empty -> lHeight <- 0
-                                         | Node(_, height, _, _) -> lHeight <- height
-                                         match right with
-                                         | Empty -> rHeight <- 0
-                                         | Node(_, height, _, _) -> rHeight <- height
+            | Node(_, _, left, right) -> let lHeight = match left with
+                                                       | Empty -> 0
+                                                       | Node(_, height, _, _) -> height
+                                         let rHeight = match right with
+                                                       | Empty -> 0
+                                                       | Node(_, height, _, _) -> height
                                          Math.Abs(lHeight - rHeight) < 2
         let rec checker (tree : Tree) =
             match tree with   
@@ -197,14 +195,16 @@ type BinTree () =
     /// Delete max value in sub tree and get it.
     /// </summary>
     member private this.DeleteMaxInSubTree (currentNode : Tree) =
-        let mutable deletedData : int = 0
+        let rec findMax current =
+            match current with
+            | Node(value, _, _, Empty) -> value
+            | Node(_, _, left, right) -> findMax right 
         let rec delete (current : Tree) : Tree =
             match current with
-            | Node(value, height, left, Tree.Empty) -> deletedData <- value
-                                                       Empty
+            | Node(value, height, left, Tree.Empty) -> left
             | Node(value, height, left, right) -> Node(value, height, left, delete right)
             | _ -> failwith "Incorrect sub tree"
-        (deletedData, delete currentNode)
+        (findMax currentNode, delete currentNode)
 
     /// <summary>
     /// Delete data from binary tree.
@@ -216,6 +216,7 @@ type BinTree () =
                                                                                 Node(value, height, left, subDelete right)
                                                                             else
                                                                                 Node(value, height, subDelete left, right)
+            | Node(_, _, Empty, Empty) -> Empty
             | Node(value, height, left, right) -> match left with
                                                   | Empty -> right
                                                   | _ -> let (maxInLeftSubTree, newLeft) = this.DeleteMaxInSubTree left
@@ -241,7 +242,10 @@ type BinTree () =
             | Empty -> false
         (tree, sValue) ||> searching
 
-    member this.GetEnum () =
+    /// <summary>
+    /// Returns enumerator.
+    /// </summary>
+    member this.GetEnumerator () =
         let rec treeAcc t (l : List<int>) =
             match t with
             | Node(value, height, left, right) -> l.Add(value)
@@ -253,99 +257,3 @@ type BinTree () =
         l.GetEnumerator()
         
         
-
-    /// <summary>
-    /// IEnumerator realization.
-    /// </summary>
-    interface IEnumerator with
-        /// <summary>
-        /// Returns current vertex.
-        /// </summary>
-        member this.Current 
-            with get () = match currentData with
-                          | Empty -> match tree with
-                                     | Empty -> failwith "Empty!" 
-                                     | Node(value, _, _, _) -> value :> obj 
-                          | Node(value, _, _, _) -> value :> obj
-
-        /// <summary>
-        /// Reset numerator.
-        /// </summary>
-        member this.Reset () =
-            currentData <- tree
-            prevNodes.Clear()
-            visited.Clear()
-
-        /// <summary>
-        /// Move to the next vertex.
-        /// </summary>
-        member this.MoveNext () =
-            if currentData = Empty then 
-                match tree with
-                | Node(value, _, _, _) -> currentData <- tree 
-                                          prevNodes.Push(currentData)
-                                          visited.Add(value)
-                                          true 
-                | Empty -> false
-            else 
-                let rec getNext node =
-                    match node with
-                    | Node(value, height, Empty, Empty) -> getNext (prevNodes.Pop()) 
-                    | Node(value, 
-                           height, 
-                           Node(lv, lg, ll, lr), 
-                           Empty) -> if visited.Contains(lv) then
-                                         getNext (prevNodes.Pop())
-                                     else
-                                         currentData <- Node(lv, lg, ll, lr)
-                                         prevNodes.Push(currentData)
-                                         visited.Add(lv)
-                                         true
-                    | Node(value, 
-                           height,
-                           Empty,
-                           Node(rv, rh, rl, rr)) -> if visited.Contains(rv) then
-                                                        getNext (prevNodes.Pop())
-                                                    else
-                                                        currentData <- Node(rv, rh, rl, rr)
-                                                        prevNodes.Push(currentData)
-                                                        visited.Add(rv)
-                                                        true
-                    | Node(value, 
-                           heigth, 
-                           Node(lv, lh, ll, lr), 
-                           Node(rv, rh, rl, rr)) -> 
-                                match visited.Contains(lv) && visited.Contains(rv) with
-                                | true -> if prevNodes.Count > 0 then getNext (prevNodes.Pop()) else false
-                                | _ ->  match visited.Contains(value) && prevNodes.Contains(node) |> not with
-                                        | true -> prevNodes.Push(node)
-                                        | _ -> ()  
-                                        if visited.Contains(lv) |> not then
-                                            currentData <- Node(lv, lh, ll, lr)
-                                            prevNodes.Push(currentData)
-                                            visited.Add(lv)
-                                            true
-                                        else if visited.Contains(rv) |> not then
-                                            currentData <- Node(rv, rh, rl, rr)
-                                            prevNodes.Push(currentData)
-                                            visited.Add(rv)
-                                            true
-                                        else
-                                            match prevNodes.Count with
-                                            | 0 -> false
-                                            | _ -> getNext (prevNodes.Pop())
-                                                   
-                    | _ -> false
-                getNext currentData
-
-
-let sample = BinTree()
-sample.Add(4)
-sample.Add(3)
-sample.Add(5)
-sample.Add(7)
-sample.Add(1)
-sample.Add(9)
-let mutable a = sample.GetEnum()
-a.MoveNext() |> ignore
-a.MoveNext() |> ignore

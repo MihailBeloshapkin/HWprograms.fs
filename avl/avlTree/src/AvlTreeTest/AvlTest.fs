@@ -25,23 +25,14 @@ let ``Simple deletion test`` () =
 let ``Check that tree is BST`` () =
     let sample = BinTree()
     for i in 1..10 do sample.Add(i)
+    sample.CheckThatBST() |> should equal true 
+
+[<Test>]
+let ``Check that tree is bst after deletions.`` () =
+    let sample = BinTree()
+    [1 .. 30] |> List.map (fun x -> sample.Add(x)) |> ignore
+    [1 .. 10] |> List.map (fun x -> if x % 2 = 0 then sample.Delete(x) else ()) |> ignore
     sample.CheckThatBST() |> should equal true
-
-[<Test>]
-let ``Empty tree move test`` () =
-    let sample = AvlTree.BinTree()
-    (sample :> IEnumerator).MoveNext() |> should equal false
-
-[<Test>]
-let ``Simple move test`` () =
-    let sample = AvlTree.BinTree()
-    sample.Add(1)
-    sample.Add(2)
-    let enumer = sample :> IEnumerator
-    enumer.MoveNext() |> ignore
-    enumer.MoveNext() |> ignore
-    enumer.Current |> should equal 2
- 
 
 [<Test>]
 let ``Check that balanced`` () =
@@ -49,14 +40,6 @@ let ``Check that balanced`` () =
     for i in 1 .. 10 do sample.Add(i)
     sample.CheckThatBalanced() |> should equal true
 
-[<Test>]
-let ``Reset test`` () =
-    let sample = BinTree()
-    for i in 1 .. 30 do sample.Add(i)
-    let enumer = sample :> IEnumerator
-    for i in 1 .. 15 do enumer.MoveNext() |> ignore
-    enumer.Reset()
-    enumer.Current |> should equal 16
 
 [<Test>]
 let ``Check balance algorithm with huge trees`` () =
@@ -71,5 +54,29 @@ let ``Check that balanced after deletion`` () =
     [1 .. 500] |> List.map (fun x -> if x % 2 = 0 then sample.Delete(x)) |> ignore
     sample.CheckThatBalanced() |> should equal true
 
-                                          
-                                               
+
+[<Test>]
+let ``Check that huge tree is balanced after deletions`` () =
+    let sample = BinTree()
+    [1 .. 1000] |> List.map (fun x -> sample.Add(x)) |> ignore
+    [1 .. 500] |> List.map (fun x -> if x % 2 = 0 then sample.Delete(x) else ()) |> ignore
+    sample.CheckThatBalanced() |> should equal true
+
+
+[<Test>]
+let ``Test enumerator`` () =
+    let sample = BinTree()
+    for i in 1 .. 10 do sample.Add(i)
+    let mutable enum = sample.GetEnumerator()
+    enum.MoveNext() |> ignore
+    enum.Current |> should equal 4
+
+[<Test>]
+let ``Create two enumerators`` () =
+    let sample = BinTree()
+    for i in 1 .. 10 do sample.Add(i)
+    let mutable enum1 = sample.GetEnumerator()
+    let mutable enum2 = sample.GetEnumerator()
+    for i in 1 .. 3 do enum1.MoveNext() |> ignore
+    for i in 1 .. 4 do enum2.MoveNext() |> ignore
+    (enum1.Current, enum2.Current) |> should equal (1, 3)                    
