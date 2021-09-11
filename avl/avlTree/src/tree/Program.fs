@@ -255,5 +255,3 @@ type BinTree () =
         let l = List<int>()
         treeAcc tree l
         l.GetEnumerator()
-        
-        
