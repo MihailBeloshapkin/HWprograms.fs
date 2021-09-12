@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="OS.fs" />
+    <Compile Include="Virus.fs" />
+    <Compile Include="PC.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

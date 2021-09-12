@@ -1,33 +1,11 @@
-// Learn more about F# at http://docs.microsoft.com/dotnet/fsharp
+module Net
 
 open System
 open System.Collections.Generic
+open Os
+open Virus
+open PC
 
-/// OS.
-type OS =
-    | Windows
-    | Linux
-    | MacOS
-
-/// PC.
-type PC (id : string, os : OS) =
-    member val Id = id with get
-    member val OS = os with get
-
-
-/// Virus.
-type Virus () =
-    member this.Variety pair = 
-        match pair with
-        | (Windows, Windows) -> 0.9
-        | (Windows, Linux) -> 0.4
-        | (Windows, MacOS) -> 1.0
-        | (Linux, Linux) -> 0.2
-        | (Linux, MacOS) ->  0.1
-        | (Linux, Windows) -> 0.3
-        | (MacOS, MacOS) -> 0.5
-        | (MacOS, Linux) -> 0.1
-        | (MacOS, Windows) -> 0.7
 
 /// Net emulation.
 type Net (edges : list<PC * PC>, infectedPC : PC, virus : Virus) =
@@ -37,23 +15,41 @@ type Net (edges : list<PC * PC>, infectedPC : PC, virus : Virus) =
 
     let random = Random()
 
-    /// One step.
+    member private this.CheckNulls () =
+        let notInfected = allVertexes |> List.filter (fun x -> infected |> List.contains x |> not)
+        edges |> List.filter (fun x -> virus.Variety((fst x).OS, (snd x).OS) > 0.0)
+
+    /// Check that net doesn't contain any isolated components.
+    member this.CountOfAvailble () =
+        let rec sub visited i =
+            let notVisited = allVertexes |> List.filter (fun x -> visited |> List.contains x |> not)
+            let newVisited = edges |> List.filter (fun x -> List.contains (x |> fst) notVisited && List.contains (x |> snd) visited
+                                                            || (List.contains (x |> snd) notVisited && List.contains (x |> fst) visited))
+                                   |>  List.map (fun x -> if List.contains (fst x) notVisited then fst x else snd x) 
+            match newVisited with
+            | [] -> i
+            | _ ->  sub (newVisited @ visited) (i + 1)
+        sub [List.head allVertexes] 0            
+
+    /// One step of infection.
     member this.Step () =
-        if List.isEmpty infected then infected <- [infectedPC] else ()
-        let mutable justInfected : list<PC> = []
-        infected |> List.map (fun x ->  let variety = random.NextDouble()
-                                        let adjackted = edges |> List.filter (fun e -> e |> fst = x || e |> snd = x)
-                                                              |> List.map (fun a -> if a |> fst = x then a |> snd else a |> fst)
-                                                              |> List.filter (fun a -> infected |> List.contains a |> not)
-                                        justInfected <- justInfected @ adjackted |> List.filter (fun y -> (1.0 - virus.Variety(x.OS, y.OS)) <= variety)) |> ignore
-        infected <- infected @ justInfected
+        infected @ List.fold (fun acc x ->  let variety = random.NextDouble()
+                                            let adjackted = edges |> List.filter (fun e -> e |> fst = x || e |> snd = x)
+                                                                  |> List.map (fun a -> if a |> fst = x then a |> snd else a |> fst)
+                                                                  |> List.filter (fun a -> infected |> List.contains a |> not)
+                                            acc @ adjackted |> List.filter (fun y -> (1.0 - virus.Variety(x.OS, y.OS)) <= variety)) [] infected
+        
 
     /// Process.
     member this.Process () =
+        let info = this.CountOfAvailble()
+    ///    if this.CheckConnection() |> snd |> not then failwith "Net contains isolated components!"
+        infected <- [infectedPC]
+        
         let rec sub iter =
-            match infected.Length = allVertexes.Length with
+            match infected.Length = info with
             | true -> ()
-            | _ -> this.Step()
+            | _ -> infected <- this.Step()
                    printfn "Step %d" iter
                    infected |> List.map (fun x -> printfn "%s" x.Id) |> ignore
                    sub (iter + 1)
@@ -61,11 +57,24 @@ type Net (edges : list<PC * PC>, infectedPC : PC, virus : Virus) =
         
 
  
-let v = Virus()
+let variety pair = 
+    match pair with
+    | (Windows, Windows) -> 0.9
+    | (Windows, Linux) -> 0.4
+    | (Windows, MacOS) -> 1.0
+    | (Linux, Linux) -> 0.2
+    | (Linux, MacOS) ->  0.7
+    | (Linux, Windows) -> 0.3
+    | (MacOS, MacOS) -> 0.5
+    | (MacOS, Linux) -> 0.9
+    | (MacOS, Windows) -> 0.7
+
+let v = Virus(variety)
 let pc1 = PC("1", MacOS)
 let pc2 = PC("2", Linux)
 let pc3 = PC("3", Windows)
 let pc4 = PC("4", Linux)
-let n = Net([(pc3, pc1); (pc1, pc2); (pc2, pc4)], pc3, v)
+let pc5 = PC("5", MacOS)
+let n = Net([(pc1, pc2); (pc1, pc3); (pc1, pc4); (pc4, pc5)], pc1, v)
 n.Process() |> ignore
 ()
