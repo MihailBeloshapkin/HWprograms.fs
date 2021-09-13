@@ -246,12 +246,12 @@ type BinTree () =
     /// Returns enumerator.
     /// </summary>
     member this.GetEnumerator () =
-        let rec treeAcc t (l : List<int>) =
-            match t with
-            | Node(value, height, left, right) -> l.Add(value)
-                                                  treeAcc left l
-                                                  treeAcc right l
+        let rec treeAcc currentTree (data : List<int>) =
+            match currentTree with
+            | Node(value, height, left, right) -> data.Add(value)
+                                                  treeAcc left data
+                                                  treeAcc right data
             | Empty -> ()
-        let l = List<int>()
-        treeAcc tree l
-        l.GetEnumerator()
+        let values = List<int>()
+        treeAcc tree values
+        values.GetEnumerator()
