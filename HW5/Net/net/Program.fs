@@ -69,15 +69,3 @@ let variety pair =
     | (MacOS, Linux) -> 0.9
     | (MacOS, Windows) -> 0.7
     
-
-let oneVariety =
-    Mock<System.Random>()
-      .Setup(fun x -> <@ x.NextDouble() @>).Returns(1.0)
-      .Create()
-
-let v = Virus(variety)
-let pc1 = PC("1", MacOS)
-let pc2 = PC("2", Linux)
-let n = new Net([(pc1, pc2)], pc1, v, oneVariety)
-n.Process()
-()

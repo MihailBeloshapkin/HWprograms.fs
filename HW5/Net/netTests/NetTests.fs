@@ -9,8 +9,9 @@ open Virus
 open PC
 open Os
 
+/// Some tests to control net.
 type NetTests () =
-
+    /// Example pair.
     let variety pair = 
         match pair with
         | (Windows, Windows) -> 0.9
@@ -22,12 +23,6 @@ type NetTests () =
         | (MacOS, MacOS) -> 0.4
         | (MacOS, Linux) -> 0.5
         | (MacOS, Windows) -> 0.7
-
-
-    let zeroVariety =
-        Mock<System.Random>()
-          .Setup(fun x -> <@ x.NextDouble() @>).Returns(0.0)
-          .Create()
 
     let oneVariety =
         Mock<System.Random>()
