@@ -20,21 +20,6 @@ type BinTree () =
     let mutable tree : Tree = Empty
 
     /// <summary>
-    /// Current node.
-    /// </summary>
-    let mutable currentData : Tree = Empty
-
-    /// <summary>
-    /// Previous nodes.
-    /// </summary>
-    let mutable prevNodes : Stack<Tree> = Stack<Tree>()
-    
-    /// <summary>
-    /// Visited vertexes.
-    /// </summary>
-    let mutable visited : List<int> = List<int>()
-
-    /// <summary>
     /// Calculate hight of each node.
     /// </summary>
     member private this.ReCalculateHeight tree =
@@ -242,16 +227,19 @@ type BinTree () =
             | Empty -> false
         (tree, sValue) ||> searching
 
-    /// <summary>
-    /// Returns enumerator.
-    /// </summary>
-    member this.GetEnumerator () =
-        let rec treeAcc currentTree (data : List<int>) =
-            match currentTree with
-            | Node(value, height, left, right) -> data.Add(value)
-                                                  treeAcc left data
-                                                  treeAcc right data
-            | Empty -> ()
-        let values = List<int>()
-        treeAcc tree values
-        values.GetEnumerator()
+
+
+    interface IEnumerable with 
+        ///<summary>
+        /// Returns enumerator.
+        /// </summary>
+        override this.GetEnumerator () =
+            let rec treeAcc currentTree (data : List<int>) =
+                match currentTree with
+                | Node(value, height, left, right) -> data.Add(value)
+                                                      treeAcc left data
+                                                      treeAcc right data
+                | Empty -> ()
+            let values = List<int>()
+            treeAcc tree values
+            values.GetEnumerator() :> IEnumerator

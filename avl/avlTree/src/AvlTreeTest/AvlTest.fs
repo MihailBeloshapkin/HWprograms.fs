@@ -5,6 +5,7 @@ open FsUnit
 open AvlTree
 open System
 open System.Collections
+open System.Collections.Generic
 
 [<Test>]
 let ``Simple addition test`` () =
@@ -67,7 +68,7 @@ let ``Check that huge tree is balanced after deletions`` () =
 let ``Test enumerator`` () =
     let sample = BinTree()
     for i in 1 .. 10 do sample.Add(i)
-    let mutable enum = sample.GetEnumerator()
+    let mutable enum = (sample :> IEnumerable).GetEnumerator()
     enum.MoveNext() |> ignore
     enum.Current |> should equal 4
 
@@ -75,8 +76,17 @@ let ``Test enumerator`` () =
 let ``Create two enumerators`` () =
     let sample = BinTree()
     for i in 1 .. 10 do sample.Add(i)
-    let mutable enum1 = sample.GetEnumerator()
-    let mutable enum2 = sample.GetEnumerator()
+    let mutable enum1 = (sample :> IEnumerable).GetEnumerator()
+    let mutable enum2 = (sample :> IEnumerable).GetEnumerator()
     for i in 1 .. 3 do enum1.MoveNext() |> ignore
     for i in 1 .. 4 do enum2.MoveNext() |> ignore
-    (enum1.Current, enum2.Current) |> should equal (1, 3)                    
+    (enum1.Current, enum2.Current) |> should equal (1, 3)            
+
+[<Test>]
+let ``Check that it is possible to use for`` () =
+    let sample = BinTree()
+    for i in 1 .. 10 do sample.Add(i)
+    let enum = (sample :> IEnumerable).GetEnumerator()
+    let data = List<obj>()
+    for item in sample do data.Add(item)
+    data.Count |> should equal 10        
