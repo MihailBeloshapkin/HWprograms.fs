@@ -2,7 +2,6 @@ module Net
 
 open System
 open System.Collections.Generic
-open Foq
 open Os
 open Virus
 open PC
@@ -10,18 +9,14 @@ open PC
 
 /// Net emulation.
 type Net (edges : list<PC * PC>, infectedPC : PC, virus : Virus, random : Random) =
+    /// Infected vertexes.
     let mutable infected : list<PC> = []
-    // let mutable justInfected : list<PC> = []
-    let allVertexes =  (List.map fst edges) @ (List.map snd edges) |> List.fold (fun acc x -> if (List.contains x acc) |> not then x :: acc else acc) []
 
-    /// let random = Random()
-
-    member private this.CheckNulls () =
-        let notInfected = allVertexes |> List.filter (fun x -> infected |> List.contains x |> not)
-        edges |> List.filter (fun x -> virus.Variety((fst x).OS, (snd x).OS) > 0.0)
+    /// All Vertexes of the current net.    
+    let allVertexes =  (List.map fst edges) @ (List.map snd edges) |> List.distinct
 
     /// Check that net doesn't contain any isolated components.
-    member this.CountOfAvailble () =
+    member this.CountOfAvailable () =
         let rec sub visited i =
             let notVisited = allVertexes |> List.filter (fun x -> visited |> List.contains x |> not)
             let newVisited = edges |> List.filter (fun x -> List.contains (x |> fst) notVisited && List.contains (x |> snd) visited
@@ -35,16 +30,15 @@ type Net (edges : list<PC * PC>, infectedPC : PC, virus : Virus, random : Random
     /// One step of infection.
     member this.Step () =
         infected @ List.fold (fun acc x ->  let variety = random.NextDouble()
-                                            let adjackted = edges |> List.filter (fun e -> e |> fst = x || e |> snd = x)
+                                            let adjacent = edges |> List.filter (fun e -> e |> fst = x || e |> snd = x)
                                                                   |> List.map (fun a -> if a |> fst = x then a |> snd else a |> fst)
                                                                   |> List.filter (fun a -> infected |> List.contains a |> not)
-                                            acc @ adjackted |> List.filter (fun y -> (1.0 - virus.Variety(x.OS, y.OS)) <= random.NextDouble())) [] infected
+                                            acc @ adjacent |> List.filter (fun y -> (1.0 - virus.Variety(x.OS, y.OS)) <= random.NextDouble())) [] infected
         
 
     /// Process.
     member this.Process () =
-        let info = this.CountOfAvailble()
-    ///    if this.CheckConnection() |> snd |> not then failwith "Net contains isolated components!"
+        let info = this.CountOfAvailable()
         infected <- [infectedPC]
         
         let rec sub iter =
@@ -56,16 +50,3 @@ type Net (edges : list<PC * PC>, infectedPC : PC, virus : Virus, random : Random
                    sub (iter + 1)
         sub 0
         
-
-let variety pair = 
-    match pair with
-    | (Windows, Windows) -> 0.9
-    | (Windows, Linux) -> 0.4
-    | (Windows, MacOS) -> 1.0
-    | (Linux, Linux) -> 0.2
-    | (Linux, MacOS) ->  0.7
-    | (Linux, Windows) -> 0.3
-    | (MacOS, MacOS) -> 0.5
-    | (MacOS, Linux) -> 0.9
-    | (MacOS, Windows) -> 0.7
-    

@@ -1,4 +1,4 @@
-module netTests
+module NetTests
 
 open System
 open NUnit.Framework
