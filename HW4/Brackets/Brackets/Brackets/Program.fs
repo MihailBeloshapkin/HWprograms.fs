@@ -2,7 +2,6 @@
 
 let brackets = Map.ofList [('(', ')'); ('[', ']'); ('{', '}')]
 
-
 /// Checks that char is bracket.
 let isBracket char = 
     match char with
