@@ -3,7 +3,8 @@ module Parking
 open System
 open System.Threading
 
-type Responce =  Success | NotSuccess | SomethingIsWrong
+/// Machine response.
+type Response =  Success | NotSuccess | SomethingIsWrong
 
 /// Machine that controls count of cars in the parking.
 type Machine (sizeOfParking : int, occupied : int ref) =
@@ -16,8 +17,12 @@ type Machine (sizeOfParking : int, occupied : int ref) =
     /// When car is leaving the parking lot.
     member this.Out () = if !occupied > 0 then Interlocked.Decrement(occupied) |> ignore else ()
 
+/// Manages parking process.
 type Parking (sizeOfPark : int, countOfMachines : int) =
     let occupied = ref 0
+
+    /// Number of occupied.
+    member this.Occupied with get () = !occupied
 
     /// Machines that control parking.
     member private this.Machines = [for i in 0 .. countOfMachines do Machine(sizeOfPark, occupied)]
@@ -31,4 +36,5 @@ type Parking (sizeOfPark : int, countOfMachines : int) =
 
 let park = Parking(5, 2)
 park.AutoIn(1)
-park.AutoIn(2)
+park.AutoIn(0)
+park.AutoOut(1)
