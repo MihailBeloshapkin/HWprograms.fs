@@ -37,12 +37,9 @@ type Parking (sizeOfPark : int, countOfMachines : int) =
     member this.AutoOut (number : int) = if number > -1 && number < this.Machines.Length then this.Machines.[number].Out() else ()
 
 
-// let mutable a = 1
-// Interlocked.CompareExchange(&a, 5, 1) |> ignore
 let park = Parking(2, 5)
 park.AutoIn(0) |> ignore
 let results = [0; 1] |> List.map (fun i -> async { return park.AutoIn(i) })
                      |> Async.Parallel
                      |> Async.RunSynchronously
 printfn "%A" results
-// printfn "%A" a
