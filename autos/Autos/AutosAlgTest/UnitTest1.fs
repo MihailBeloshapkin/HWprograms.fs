@@ -4,6 +4,7 @@ open NUnit.Framework
 open FsUnit
 open Parking
 open System.Threading.Tasks
+open System.Collections.Concurrent
 
 [<Test>]
 let ``Simple car entrance test`` () =
@@ -36,4 +37,11 @@ let ``Parallel entrance to a full park`` () =
     for i in 0 .. 4 do park.AutoIn(i) |> ignore
     Parallel.For(0, 5, (fun i -> park.AutoIn(i) |> should equal NotSuccess)) |> ignore
     
-
+[<Test>]
+let ``Parallel enterance but there are no places for everyone`` () =
+    let park = Parking(2, 5)
+    park.AutoIn(0) |> ignore
+    let results = [0; 1] |> List.map (fun i -> async { return park.AutoIn(i) })
+                         |> Async.Parallel
+                         |> Async.RunSynchronously
+    (results = [|Success; NotSuccess|] || results = [|NotSuccess; Success|]) |> should equal true
