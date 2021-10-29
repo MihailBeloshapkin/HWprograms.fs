@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "PhoneList", "PhoneList\PhoneList.fsproj", "{F4BC4485-1A6F-42A9-B697-4420EB62E14D}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "PhoneListTest", "PhoneListTest\PhoneListTest.fsproj", "{2EFB6975-9B6F-4CE2-A278-FA6744BE2D9E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F4BC4485-1A6F-42A9-B697-4420EB62E14D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4BC4485-1A6F-42A9-B697-4420EB62E14D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4BC4485-1A6F-42A9-B697-4420EB62E14D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4BC4485-1A6F-42A9-B697-4420EB62E14D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EFB6975-9B6F-4CE2-A278-FA6744BE2D9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EFB6975-9B6F-4CE2-A278-FA6744BE2D9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EFB6975-9B6F-4CE2-A278-FA6744BE2D9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EFB6975-9B6F-4CE2-A278-FA6744BE2D9E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {55604DEE-CB72-4D7C-B95E-C1ED5BF304A6}
+	EndGlobalSection
+EndGlobal
